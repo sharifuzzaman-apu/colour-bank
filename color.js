@@ -6,6 +6,8 @@
  * -add a toast message when the color code is copied
  * - Bonus: Add slide-in and slide-out animation to the toast message
  * -User can type their own color hexadecimal code to the input field and change the background color
+ * -# is including in the input field
+ * -Lower case to upper case conversion of hex code in the input field
  */
 
 // Steps
@@ -28,31 +30,34 @@ function main() {
 	changeBtn.addEventListener('click', function () {
 		const bgColor = generateHexColor();
 		root.style.backgroundColor = bgColor;
-		output.value = bgColor;
-		
+		output.value = bgColor.substring(1);
+
 	});
 	// step 5 - handle the copy button click event
 	copyBtn.addEventListener('click', function () {
-		navigator.clipboard.writeText(output.value);
+		navigator.clipboard.writeText(`#${output.value}`);
 		if (div !== null) {
 			div.remove();
 			div = null;
 		}
 		// copyBtn.innerHTML = "Code Copied";
-		
-		else if (isValidHex(output.value)){
-			generateToastMessage(`${output.value} copied to clipboard`);
-		}else{
+		// step 11 - prevent copying hex code if it is not valid
+		else if (isValidHex(output.value)) {
+			generateToastMessage(`#${output.value} copied to clipboard`);
+		} else {
 			alert("Invalid Color Code");
 		}
 	});
 	// step 10-implement change handler on input field
-	output.addEventListener('keyup',function(e){
+	output.addEventListener('keyup', function (e) {
 		const color = e.target.value;
-		if (color && isValidHex(color)) {
-			root.style.backgroundColor=color;		
+		if (color) {
+			output.value = color.toUpperCase();
+			if (isValidHex(color)) {
+				root.style.backgroundColor = `#${color}`;
+			}
 		}
-	});		
+	});
 
 
 }
@@ -95,13 +100,10 @@ function generateToastMessage(msg) {
  */
 // step 9- create isHexValid function 
 function isValidHex(color) {
-	if (color.length !== 7) return false;
-	if (color[0] !== '#') return false;
-
-	color=color.substring(1)
+	if (color.length !== 6) return false;
 	return /^[0-9A-Fa-f]{6}$/i.test(color);
 }
-	
+
 
 
 
